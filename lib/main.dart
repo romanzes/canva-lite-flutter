@@ -55,43 +55,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Row(
                     children: <Widget>[
-                      Expanded(
-                        child: CircumscribedInkResponse(
-                          child: Center(
-                            child: Text(
-                              'Add',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          highlightColor: Colors.transparent,
-                          splashColor: Color(0x1f000000),
-                          splashFactory: InkRipple.splashFactory,
-                          onTap: () {
-                            /* ... */
-                          },
-                        ),
+                      FancyButton(
+                        text: 'Add',
+                        onTap: () {
+                          /* ... */
+                        },
                       ),
-                      Expanded(
-                        child: CircumscribedInkResponse(
-                          child: Center(
-                            child: Text(
-                              'Remove',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          highlightColor: Colors.transparent,
-                          splashColor: Color(0x1f000000),
-                          splashFactory: InkRipple.splashFactory,
-                          onTap: () {
-                            /* ... */
-                          },
-                        ),
+                      FancyButton(
+                        text: 'Remove',
+                        onTap: () {
+                          /* ... */
+                        },
                       ),
                     ],
                   ),
@@ -101,6 +75,38 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.symmetric(horizontal: 16),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FancyButton extends StatelessWidget {
+  const FancyButton({
+    Key key,
+    this.text,
+    this.onTap,
+  }) : super(key: key);
+
+  final String text;
+  final GestureTapCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CircumscribedInkResponse(
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+            ),
+          ),
+        ),
+        highlightColor: Colors.transparent,
+        splashColor: Color(0x1f000000),
+        splashFactory: InkRipple.splashFactory,
+        onTap: onTap,
       ),
     );
   }

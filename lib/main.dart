@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'canvas.dart';
 import 'circumscribed_ink_response.dart';
 
 void main() => runApp(MyApp());
@@ -23,6 +24,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ElementsBloc _elementsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _elementsBloc = ElementsBloc();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   aspectRatio: 1.0,
                   child: Material(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
+                    child: Canvas(elementsBloc: _elementsBloc),
                     color: Colors.white,
                     elevation: 4,
                   ),
@@ -58,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       FancyButton(
                         text: 'Add',
                         onTap: () {
-                          /* ... */
+                          _elementsBloc.addElement();
                         },
                       ),
                       FancyButton(
@@ -77,6 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _elementsBloc.dispose();
+    super.dispose();
   }
 }
 

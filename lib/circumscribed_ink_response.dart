@@ -19,7 +19,7 @@ class CircumscribedInkResponse extends StatefulWidget {
     this.splashFactory,
     this.enableFeedback = true,
     this.excludeFromSemantics = false,
-  });
+  }) : super(key: key);
 
   final Widget child;
   final GestureTapCallback onTap;
@@ -45,7 +45,6 @@ class _CircumscribedInkResponse extends State<CircumscribedInkResponse> {
 
   Widget build(BuildContext context) {
     return InkResponse(
-      key: widget.key,
       child: widget.child,
       onTap: widget.onTap,
       onTapDown: widget.onTapDown,

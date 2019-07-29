@@ -24,16 +24,51 @@ class _Canvas extends State<Canvas> {
       builder: (context, snapshot) {
         return Stack(
           children: snapshot.data
-              .map((element) => Positioned(
-                    child: Container(color: element.color),
-                    left: element.x,
-                    top: element.x,
-                    width: element.width,
-                    height: element.height,
-                  ))
+              .map((element) => ElementView(element: element))
               .toList(),
         );
       },
+    );
+  }
+}
+
+class ElementView extends StatefulWidget {
+  ElementView({
+    @required this.element,
+  });
+
+  final Element element;
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ElementView();
+  }
+}
+
+class _ElementView extends State<ElementView> {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      child: Draggable(
+        child: Container(
+          color: widget.element.color,
+          width: widget.element.size.width,
+          height: widget.element.size.height,
+        ),
+        feedback: Container(
+          color: widget.element.color.withOpacity(0.5),
+          width: widget.element.size.width,
+          height: widget.element.size.height,
+        ),
+        onDraggableCanceled: (velocity, offset) {
+          setState(() {
+            RenderBox getBox = context.findRenderObject().parent;
+            widget.element.position = getBox.globalToLocal(offset);
+          });
+        },
+      ),
+      left: widget.element.position.dx,
+      top: widget.element.position.dy,
     );
   }
 }
@@ -50,7 +85,7 @@ class ElementsBloc {
     double hue = _random.nextDouble() * 360;
     Color color = HSLColor.fromAHSL(1.0, hue, 1.0, 0.5).toColor();
     Element newElement =
-        Element(x: 0, y: 0, width: 100, height: 100, color: color);
+        Element(position: Offset(0, 0), size: Size(100, 100), color: color);
     _elements.add(newElement);
     _elementsStreamController.add(_elements);
   }
@@ -61,17 +96,13 @@ class ElementsBloc {
 }
 
 class Element {
-  const Element({
-    @required this.x,
-    @required this.y,
-    @required this.width,
-    @required this.height,
+  Element({
+    @required this.position,
+    @required this.size,
     @required this.color,
   });
 
-  final double x;
-  final double y;
-  final double width;
-  final double height;
-  final Color color;
+  Offset position;
+  Size size;
+  Color color;
 }

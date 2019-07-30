@@ -110,6 +110,18 @@ class ElementsBloc {
     _elementsStreamController.add(_elements);
   }
 
+  void removeElement(int index) {
+    _elements.removeAt(index);
+    _elementsStreamController.add(_elements);
+  }
+
+  void removeLastElement() {
+    if (_elements.length > 0) {
+      _elements.removeLast();
+    }
+    _elementsStreamController.add(_elements);
+  }
+
   void dispose() {
     _elementsStreamController.close();
   }

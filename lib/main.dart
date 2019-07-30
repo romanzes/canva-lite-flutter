@@ -69,19 +69,33 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Row(
                     children: <Widget>[
-                      FancyButton(
-                        text: 'Add',
-                        onTap: () {
-                          final RenderBox box =
-                              _canvasKey.currentContext.findRenderObject();
-                          _elementsBloc.addElement(box.size);
-                        },
+                      Expanded(
+                        child: FancyButton(
+                          text: 'Add',
+                          onTap: () {
+                            final RenderBox box =
+                                _canvasKey.currentContext.findRenderObject();
+                            _elementsBloc.addElement(box.size);
+                          },
+                        ),
                       ),
-                      FancyButton(
-                        text: 'Remove',
-                        onTap: () {
-                          /* ... */
-                        },
+                      Expanded(
+                        child: DragTarget(
+                          builder: (context, data, rejectedData) {
+                            return FancyButton(
+                              text: 'Remove',
+                              onTap: () {
+                                _elementsBloc.removeLastElement();
+                              },
+                            );
+                          },
+                          onWillAccept: (int data) {
+                            return true;
+                          },
+                          onAccept: (int data) {
+                            _elementsBloc.removeElement(data);
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -114,22 +128,20 @@ class FancyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: CircumscribedInkResponse(
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
+    return CircumscribedInkResponse(
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
           ),
         ),
-        highlightColor: Colors.transparent,
-        splashColor: Color(0x1f000000),
-        splashFactory: InkRipple.splashFactory,
-        onTap: onTap,
       ),
+      highlightColor: Colors.transparent,
+      splashColor: Color(0x1f000000),
+      splashFactory: InkRipple.splashFactory,
+      onTap: onTap,
     );
   }
 }

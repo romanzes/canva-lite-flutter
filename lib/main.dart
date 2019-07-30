@@ -24,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GlobalKey _canvasKey = GlobalKey();
   ElementsBloc _elementsBloc;
 
   @override
@@ -57,7 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   aspectRatio: 1.0,
                   child: Material(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
-                    child: Canvas(elementsBloc: _elementsBloc),
+                    child: Canvas(
+                      elementsBloc: _elementsBloc,
+                      key: _canvasKey,
+                    ),
                     color: Colors.white,
                     elevation: 4,
                   ),
@@ -68,7 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       FancyButton(
                         text: 'Add',
                         onTap: () {
-                          _elementsBloc.addElement();
+                          final RenderBox box =
+                              _canvasKey.currentContext.findRenderObject();
+                          _elementsBloc.addElement(box.size);
                         },
                       ),
                       FancyButton(

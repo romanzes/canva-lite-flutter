@@ -96,11 +96,16 @@ class ElementsBloc {
 
   Stream<List<Element>> get elements => _elementsStreamController.stream;
 
-  void addElement() {
+  void addElement(Size canvasSize) {
+    double elementSize = 100;
+    double left = _random.nextDouble() * (canvasSize.width - elementSize);
+    double top = _random.nextDouble() * (canvasSize.height - elementSize);
     double hue = _random.nextDouble() * 360;
     Color color = HSLColor.fromAHSL(1.0, hue, 1.0, 0.5).toColor();
-    Element newElement =
-        Element(position: Offset(0, 0), size: Size(100, 100), color: color);
+    Element newElement = Element(
+        position: Offset(left, top),
+        size: Size(elementSize, elementSize),
+        color: color);
     _elements.add(newElement);
     _elementsStreamController.add(_elements);
   }

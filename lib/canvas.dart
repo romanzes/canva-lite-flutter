@@ -18,9 +18,9 @@ class Canvas extends StatefulWidget {
 class _Canvas extends State<Canvas> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Element>>(
+    return StreamBuilder<List<CanvasElement>>(
       stream: widget.elementsBloc.elements,
-      initialData: List<Element>(),
+      initialData: List<CanvasElement>(),
       builder: (context, snapshot) {
         return Stack(
           children: snapshot.data
@@ -37,7 +37,7 @@ class ElementView extends StatefulWidget {
     @required this.element,
   });
 
-  final Element element;
+  final CanvasElement element;
 
   @override
   State<StatefulWidget> createState() {
@@ -89,12 +89,13 @@ class _ElementView extends State<ElementView> {
 }
 
 class ElementsBloc {
-  final _elementsStreamController = StreamController<List<Element>>();
+  final _elementsStreamController =
+      StreamController<List<CanvasElement>>.broadcast();
 
   Random _random = Random();
-  List<Element> _elements = List<Element>();
+  List<CanvasElement> _elements = List<CanvasElement>();
 
-  Stream<List<Element>> get elements => _elementsStreamController.stream;
+  Stream<List<CanvasElement>> get elements => _elementsStreamController.stream;
 
   void addElement(Size canvasSize) {
     double elementSize = 100;
@@ -102,12 +103,16 @@ class ElementsBloc {
     double top = _random.nextDouble() * (canvasSize.height - elementSize);
     double hue = _random.nextDouble() * 360;
     Color color = HSLColor.fromAHSL(1.0, hue, 1.0, 0.5).toColor();
-    Element newElement = Element(
+    CanvasElement newElement = CanvasElement(
         position: Offset(left, top),
         size: Size(elementSize, elementSize),
         color: color);
     _elements.add(newElement);
     _elementsStreamController.add(_elements);
+  }
+
+  bool hasElements() {
+    return _elements.length > 0;
   }
 
   void removeElement(int index) {
@@ -116,7 +121,7 @@ class ElementsBloc {
   }
 
   void removeLastElement() {
-    if (_elements.length > 0) {
+    if (hasElements()) {
       _elements.removeLast();
     }
     _elementsStreamController.add(_elements);
@@ -127,8 +132,8 @@ class ElementsBloc {
   }
 }
 
-class Element {
-  Element({
+class CanvasElement {
+  CanvasElement({
     @required this.position,
     @required this.size,
     @required this.color,

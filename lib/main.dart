@@ -82,10 +82,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(
                         child: DragTarget(
                           builder: (context, data, rejectedData) {
-                            return FancyButton(
-                              text: 'Remove',
-                              onTap: () {
-                                _elementsBloc.removeLastElement();
+                            return StreamBuilder<List<CanvasElement>>(
+                              stream: _elementsBloc.elements,
+                              initialData: List<CanvasElement>(),
+                              builder: (context, snapshot) {
+                                return FancyButton(
+                                  text: 'Remove',
+                                  onTap: () {
+                                    _elementsBloc.removeLastElement();
+                                  },
+                                  enable: _elementsBloc.hasElements(),
+                                );
                               },
                             );
                           },
@@ -121,10 +128,12 @@ class FancyButton extends StatelessWidget {
     Key key,
     this.text,
     this.onTap,
+    this.enable = true,
   }) : super(key: key);
 
   final String text;
   final GestureTapCallback onTap;
+  final bool enable;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +142,7 @@ class FancyButton extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: Colors.white,
+            color: enable ? Colors.white : Colors.grey,
             fontSize: 18,
           ),
         ),
@@ -141,7 +150,7 @@ class FancyButton extends StatelessWidget {
       highlightColor: Colors.transparent,
       splashColor: Color(0x1f000000),
       splashFactory: InkRipple.splashFactory,
-      onTap: onTap,
+      onTap: enable ? onTap : null,
     );
   }
 }

@@ -51,12 +51,27 @@ class _ElementView extends State<ElementView> {
     return Positioned(
       child: Draggable(
         child: Container(
-          color: widget.element.color,
+          child: Material(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: widget.element.color,
+          ),
+          width: widget.element.size.width,
+          height: widget.element.size.height,
+        ),
+        childWhenDragging: Container(
+          child: Material(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: widget.element.color.withOpacity(0.5),
+          ),
           width: widget.element.size.width,
           height: widget.element.size.height,
         ),
         feedback: Container(
-          color: widget.element.color.withOpacity(0.5),
+          child: Material(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: widget.element.color,
+            elevation: 8,
+          ),
           width: widget.element.size.width,
           height: widget.element.size.height,
         ),

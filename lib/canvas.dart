@@ -49,7 +49,7 @@ class _ElementView extends State<ElementView> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      child: Draggable(
+      child: Draggable<int>(
         child: Container(
           child: Material(
             borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -58,18 +58,11 @@ class _ElementView extends State<ElementView> {
           width: widget.element.size.width,
           height: widget.element.size.height,
         ),
-        childWhenDragging: Container(
-          child: Material(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            color: widget.element.color.withOpacity(0.5),
-          ),
-          width: widget.element.size.width,
-          height: widget.element.size.height,
-        ),
+        data: widget.element.index,
         feedback: Container(
           child: Material(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            color: widget.element.color,
+            color: widget.element.color.withOpacity(0.3),
             elevation: 8,
           ),
           width: widget.element.size.width,
@@ -104,9 +97,11 @@ class ElementsBloc {
     double hue = _random.nextDouble() * 360;
     Color color = HSLColor.fromAHSL(1.0, hue, 1.0, 0.5).toColor();
     CanvasElement newElement = CanvasElement(
-        position: Offset(left, top),
-        size: Size(elementSize, elementSize),
-        color: color);
+      position: Offset(left, top),
+      size: Size(elementSize, elementSize),
+      color: color,
+      index: _elements.length,
+    );
     _elements.add(newElement);
     _elementsStreamController.add(_elements);
   }
@@ -137,9 +132,11 @@ class CanvasElement {
     @required this.position,
     @required this.size,
     @required this.color,
+    @required this.index,
   });
 
   Offset position;
   Size size;
   Color color;
+  int index;
 }

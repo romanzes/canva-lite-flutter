@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 
 import 'canvas.dart';
@@ -80,29 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Expanded(
-                        child: DragTarget(
-                          builder: (context, data, rejectedData) {
-                            return StreamBuilder<List<CanvasElement>>(
-                              stream: _elementsBloc.elements,
-                              initialData: List<CanvasElement>(),
-                              builder: (context, snapshot) {
-                                return FancyButton(
-                                  text: 'Remove',
-                                  onTap: () {
-                                    _elementsBloc.removeLastElement();
-                                  },
-                                  enable: _elementsBloc.hasElements(),
-                                );
-                              },
-                            );
-                          },
-                          onWillAccept: (int data) {
-                            return true;
-                          },
-                          onAccept: (int data) {
-                            _elementsBloc.removeElement(data);
-                          },
-                        ),
+                        child: RemoveButton(elementsBloc: _elementsBloc),
                       ),
                     ],
                   ),
@@ -151,6 +130,64 @@ class FancyButton extends StatelessWidget {
       splashColor: Color(0x1f000000),
       splashFactory: InkRipple.splashFactory,
       onTap: enable ? onTap : null,
+    );
+  }
+}
+
+class RemoveButton extends StatefulWidget {
+  const RemoveButton({
+    Key key,
+    @required this.elementsBloc,
+  }) : super(key: key);
+
+  final ElementsBloc elementsBloc;
+
+  @override
+  _RemoveButton createState() => _RemoveButton();
+}
+
+class _RemoveButton extends State<RemoveButton> {
+  String _animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<int>(
+      builder: (context, data, rejectedData) {
+        return CircumscribedInkResponse(
+          child: Center(
+            child: FlareActor(
+              "assets/bin.flr",
+              color: Colors.white,
+              animation: _animation,
+            ),
+          ),
+          highlightColor: Colors.transparent,
+          splashColor: Color(0x1f000000),
+          splashFactory: InkRipple.splashFactory,
+          onTap: () {
+            widget.elementsBloc.removeLastElement();
+          },
+        );
+      },
+      onWillAccept: (data) {
+        debugPrint('draggable is on the target');
+        setState(() {
+          _animation = "Open";
+        });
+        return true;
+      },
+      onAccept: (data) {
+        widget.elementsBloc.removeElement(data);
+        setState(() {
+          _animation = "Close";
+        });
+      },
+      onLeave: (data) {
+        debugPrint('draggable has left the target');
+        setState(() {
+          _animation = "Close";
+        });
+      },
     );
   }
 }

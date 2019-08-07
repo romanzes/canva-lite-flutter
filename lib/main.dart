@@ -1,4 +1,7 @@
+import 'package:flare_dart/math/mat2d.dart';
+import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'canvas.dart';
@@ -146,41 +149,61 @@ class RemoveButton extends StatefulWidget {
   _RemoveButton createState() => _RemoveButton();
 }
 
-class _RemoveButton extends State<RemoveButton> {
+class _RemoveButton extends State<RemoveButton> with FlareController {
   String _animation;
 
   @override
   Widget build(BuildContext context) {
-    return DragTarget<int>(
-      builder: (context, data, rejectedData) {
-        return FancyButton(
-          child: FlareActor(
-            "assets/bin.flr",
-            color: Colors.white,
-            animation: _animation,
-          ),
-          onTap: () {
-            widget.elementsBloc.removeLastElement();
+    return StreamBuilder<List<CanvasElement>>(
+      stream: widget.elementsBloc.elements,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        isActive.value = true;
+        return DragTarget<int>(
+          builder: (context, data, rejectedData) {
+            bool enabled = widget.elementsBloc.hasElements();
+            return FancyButton(
+              child: FlareActor(
+                "assets/bin.flr",
+                color: enabled ? Colors.white : Colors.grey,
+                animation: _animation,
+                controller: this,
+              ),
+              onTap: () {
+                widget.elementsBloc.removeLastElement();
+              },
+              enable: enabled,
+            );
+          },
+          onWillAccept: (data) {
+            setState(() {
+              _animation = "Open";
+            });
+            return true;
+          },
+          onAccept: (data) {
+            widget.elementsBloc.removeElement(data);
+            setState(() {
+              _animation = "Close";
+            });
+          },
+          onLeave: (data) {
+            setState(() {
+              _animation = "Close";
+            });
           },
         );
       },
-      onWillAccept: (data) {
-        setState(() {
-          _animation = "Open";
-        });
-        return true;
-      },
-      onAccept: (data) {
-        widget.elementsBloc.removeElement(data);
-        setState(() {
-          _animation = "Close";
-        });
-      },
-      onLeave: (data) {
-        setState(() {
-          _animation = "Close";
-        });
-      },
     );
   }
+
+  @override
+  bool advance(FlutterActorArtboard artboard, double elapsed) {
+    return false;
+  }
+
+  @override
+  void initialize(FlutterActorArtboard artboard) {}
+
+  @override
+  void setViewTransform(Mat2D viewTransform) {}
 }

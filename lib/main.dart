@@ -72,7 +72,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <Widget>[
                       Expanded(
                         child: FancyButton(
-                          text: 'Add',
+                          child: Text(
+                            "Add",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
                           onTap: () {
                             final RenderBox box =
                                 _canvasKey.currentContext.findRenderObject();
@@ -105,26 +111,20 @@ class _MyHomePageState extends State<MyHomePage> {
 class FancyButton extends StatelessWidget {
   const FancyButton({
     Key key,
-    this.text,
+    this.child,
     this.onTap,
     this.enable = true,
   }) : super(key: key);
 
-  final String text;
   final GestureTapCallback onTap;
   final bool enable;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return CircumscribedInkResponse(
       child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            color: enable ? Colors.white : Colors.grey,
-            fontSize: 18,
-          ),
-        ),
+        child: child,
       ),
       highlightColor: Colors.transparent,
       splashColor: Color(0x1f000000),
@@ -153,17 +153,12 @@ class _RemoveButton extends State<RemoveButton> {
   Widget build(BuildContext context) {
     return DragTarget<int>(
       builder: (context, data, rejectedData) {
-        return CircumscribedInkResponse(
-          child: Center(
-            child: FlareActor(
-              "assets/bin.flr",
-              color: Colors.white,
-              animation: _animation,
-            ),
+        return FancyButton(
+          child: FlareActor(
+            "assets/bin.flr",
+            color: Colors.white,
+            animation: _animation,
           ),
-          highlightColor: Colors.transparent,
-          splashColor: Color(0x1f000000),
-          splashFactory: InkRipple.splashFactory,
           onTap: () {
             widget.elementsBloc.removeLastElement();
           },

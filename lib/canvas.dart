@@ -82,6 +82,8 @@ class _ElementView extends State<ElementView> {
 }
 
 class ElementsBloc {
+  int _nextIndex = 0;
+
   final _elementsStreamController =
       StreamController<List<CanvasElement>>.broadcast();
 
@@ -100,8 +102,9 @@ class ElementsBloc {
       position: Offset(left, top),
       size: Size(elementSize, elementSize),
       color: color,
-      index: _elements.length,
+      index: _nextIndex,
     );
+    _nextIndex++;
     _elements.add(newElement);
     _elementsStreamController.add(_elements);
   }
@@ -111,7 +114,7 @@ class ElementsBloc {
   }
 
   void removeElement(int index) {
-    _elements.removeAt(index);
+    _elements = _elements.where((elem) => elem.index != index).toList();
     _elementsStreamController.add(_elements);
   }
 

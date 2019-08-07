@@ -165,7 +165,6 @@ class _RemoveButton extends State<RemoveButton> {
         );
       },
       onWillAccept: (data) {
-        debugPrint('draggable is on the target');
         setState(() {
           _animation = "Open";
         });
@@ -178,7 +177,6 @@ class _RemoveButton extends State<RemoveButton> {
         });
       },
       onLeave: (data) {
-        debugPrint('draggable has left the target');
         setState(() {
           _animation = "Close";
         });

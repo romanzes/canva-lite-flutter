@@ -42,65 +42,116 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: SafeArea(
         child: Material(
-          child: Padding(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      'Canva Lite',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 34,
-                      ),
-                    ),
-                  ),
-                ),
-                AspectRatio(
-                  aspectRatio: 1.0,
-                  child: Material(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    child: Canvas(
-                      elementsBloc: _elementsBloc,
-                      key: _canvasKey,
-                    ),
-                    color: Colors.white,
-                    elevation: 4,
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: FancyButton(
-                          child: Text(
-                            "Add",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onTap: () {
-                            final RenderBox box =
-                                _canvasKey.currentContext.findRenderObject();
-                            _elementsBloc.addElement(box.size);
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: RemoveButton(elementsBloc: _elementsBloc),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          child: OrientationBuilder(
+            builder: (context, orientation) {
+              switch (orientation) {
+                case Orientation.portrait:
+                  return _buildPortrait();
+                case Orientation.landscape:
+                default:
+                  return _buildLandscape();
+              }
+            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPortrait() {
+    return Padding(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: _buildTitle(),
+            ),
+          ),
+          _buildCanvas(),
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                Expanded(child: _buildAddButton()),
+                Expanded(child: RemoveButton(elementsBloc: _elementsBloc)),
+              ],
+            ),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+
+  Widget _buildLandscape() {
+    return Padding(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Align(
+              alignment: AlignmentDirectional.center,
+              child: RotatedBox(
+                child: _buildTitle(),
+                quarterTurns: -1,
+              ),
+            ),
+          ),
+          _buildCanvas(),
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Expanded(child: _buildAddButton()),
+                Expanded(child: RemoveButton(elementsBloc: _elementsBloc)),
+              ],
+              verticalDirection: VerticalDirection.up,
+            ),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(vertical: 16),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Text(
+      'Canva Lite',
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 34,
+      ),
+    );
+  }
+
+  Widget _buildCanvas() {
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: Material(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        child: Canvas(
+          elementsBloc: _elementsBloc,
+          key: _canvasKey,
+        ),
+        color: Colors.white,
+        elevation: 4,
+      ),
+    );
+  }
+
+  Widget _buildAddButton() {
+    return FancyButton(
+      child: Text(
+        "Add",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+        ),
+      ),
+      onTap: () {
+        final RenderBox box = _canvasKey.currentContext.findRenderObject();
+        _elementsBloc.addElement(box.size);
+      },
     );
   }
 
